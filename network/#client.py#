@@ -25,6 +25,7 @@ class Prot(protocol.Protocol):
 
     def connectionLost(self, reason):
         #close game
+        lc.stop()
         print "Error: connection lost"
 
     #writes data in q and prepares for next item
@@ -48,10 +49,6 @@ class Client(protocol.ClientFactory):
 
         #create game and set as self.game
         self.game = GameSpace(q) # every time game is change call q.put()
-
-        #create loopingCall
-        self.lc =LoopingCall(self.game.loop_iteration,None, None)
-        self.lc.start(1/60)
 
     def buildProtocol(self, addr):    
         return Prot(self.q, self.game )
