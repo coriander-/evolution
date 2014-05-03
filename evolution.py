@@ -5,7 +5,7 @@
 # Authors: Nick Burns (nburns3@nd.edu, coriander-)
 #		   Zach Lipp (zlipp@nd.edu)
 
-# Current version: 0.10 (May 3, 2014)
+# Current version: 0.40 (May 3, 2014)
 
 # Usage: python evolution.py <options> (not sure what all the options will be yet)
 
@@ -21,6 +21,40 @@ from twisted.internet.defer import DeferredQueue
 # Misc imports
 import sys
 import math
+import random
+
+
+# Class for miscellaneous fish
+class Fish(pygame.sprite.Sprite):
+	def __init__(self, gs = None):
+		pygame.sprite.Sprite.__init__(self)
+		self.gs = gs
+		self.image = pygame.image.load("media/fish_red.png")
+		self.rect = self.image.get_rect()
+
+		self.velocity = random.randint(1, 5)
+
+		# Determine whether the fish travels right or left
+		self.right = random.randint(0, 1)
+		self.rect.centery = random.randint(10, gs.height)
+
+		# Keep original image to limit resize errors
+		self.orig_image = self.image
+		self.orig_flipped = pygame.transform.flip(self.orig_image, True, False)
+
+		if self.right:
+			self.dx = self.velocity
+			self.rect.centerx = -100
+		else:
+			self.dx = -1 * self.velocity
+			self.rect.centerx = gs.width + 100
+			self.image = self.orig_flipped
+			#self.image = pygame.transform.scale(self.orig_flipped, (100, 50))
+
+	def tick(self):
+		# Move the fish
+		# Move the player based on keys pressed
+		self.rect = self.rect.move(self.dx, 0)
 
 
 # Player class
@@ -87,7 +121,7 @@ class GameSpace:
 		self.backdrop = pygame.image.load("media/background.png")
 
 		# Object arrays
-		self.lasers = []
+		self.fish = []
 		self.objects = []
 		
 		self.screen = pygame.display.set_mode(self.size)
@@ -122,13 +156,14 @@ class GameSpace:
 					self.player.move()
 				elif event.type == pygame.MOUSEBUTTONDOWN:
 					#self.player.fire()
+					self.fish.append(Fish(self))
 					pass
 				elif event.type == pygame.MOUSEBUTTONUP:
 					#self.player.stopFire()
 					pass
 			
 			# Send a tick to every game object
-			for l in self.lasers:
+			for l in self.fish:
 				l.tick()
 			for o in self.objects:
 				o.tick()
@@ -136,10 +171,10 @@ class GameSpace:
 			# Display game objects
 			self.screen.fill(self.black)
 			self.screen.blit(self.backdrop, (0,0))
+			for l in self.fish:
+				self.screen.blit(l.image, l.rect)
 			for o in self.objects:
 				self.screen.blit(o.image, o.rect)
-			for l in self.lasers:
-				self.screen.blit(l.image, l.rect)
 			
 			pygame.display.flip()
 
@@ -153,6 +188,9 @@ if __name__ == "__main__":
 	if len(args) != 2:
 		print "Usage: python " + str(args[0]) + " <host|client>"
 		sys.exit(1)
+
+	# Seed the random number generator
+	random.seed()
 
 	# Setup pygame stuff, initialize the game
 	gs = GameSpace()
