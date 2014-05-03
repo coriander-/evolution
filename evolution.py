@@ -5,7 +5,7 @@
 # Authors: Nick Burns (nburns3@nd.edu, coriander-)
 #		   Zach Lipp (zlipp@nd.edu)
 
-# Current version: 0.40 (May 3, 2014)
+# Current version: 0.50 (May 3, 2014)
 
 # Usage: python evolution.py <options> (not sure what all the options will be yet)
 
@@ -55,6 +55,14 @@ class Fish(pygame.sprite.Sprite):
 		# Move the fish
 		# Move the player based on keys pressed
 		self.rect = self.rect.move(self.dx, 0)
+
+		# Determine if fish has traveled too far off screen and should be destroyed
+		if self.right:
+			if self.rect.left > self.gs.width:
+				self.gs.fish.remove(self)
+		else:
+			if self.rect.right < 0:
+				self.gs.fish.remove(self)
 
 
 # Player class
@@ -111,6 +119,44 @@ class Player(pygame.sprite.Sprite):
 
 # Gamespace class for the main game
 class GameSpace:
+	# Function to call each game loop (for networking integration)
+	# Returns true if game should quit, false otherwise
+	def loop_iteration(self):
+		# Handle input
+
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+				return True
+				#break
+			elif event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
+				self.player.move()
+			elif event.type == pygame.MOUSEBUTTONDOWN:
+				#self.player.fire()
+				self.fish.append(Fish(self))
+				pass
+			elif event.type == pygame.MOUSEBUTTONUP:
+				#self.player.stopFire()
+				pass
+		
+		# Send a tick to every game object
+		for l in self.fish:
+			l.tick()
+		for o in self.objects:
+			o.tick()
+		
+		# Display game objects
+		self.screen.fill(self.black)
+		self.screen.blit(self.backdrop, (0,0))
+		for l in self.fish:
+			self.screen.blit(l.image, l.rect)
+		for o in self.objects:
+			self.screen.blit(o.image, o.rect)
+		
+		pygame.display.flip()
+
+		return False
+
+
 	def main(self):
 		# Basic intialization
 		pygame.init()
@@ -146,37 +192,9 @@ class GameSpace:
 		while quit == False:
 			# Set clock tick regulation
 			self.clock.tick(60)
+
+			quit = self.loop_iteration()
 			
-			# Handle input
-			for event in pygame.event.get():
-				if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-					quit = True
-					break
-				elif event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
-					self.player.move()
-				elif event.type == pygame.MOUSEBUTTONDOWN:
-					#self.player.fire()
-					self.fish.append(Fish(self))
-					pass
-				elif event.type == pygame.MOUSEBUTTONUP:
-					#self.player.stopFire()
-					pass
-			
-			# Send a tick to every game object
-			for l in self.fish:
-				l.tick()
-			for o in self.objects:
-				o.tick()
-			
-			# Display game objects
-			self.screen.fill(self.black)
-			self.screen.blit(self.backdrop, (0,0))
-			for l in self.fish:
-				self.screen.blit(l.image, l.rect)
-			for o in self.objects:
-				self.screen.blit(o.image, o.rect)
-			
-			pygame.display.flip()
 
 		# Quit the game
 		pygame.quit()
