@@ -5,7 +5,7 @@
 # Authors: Nick Burns (nburns3@nd.edu, coriander-)
 #		   Zach Lipp (zlipp@nd.edu)
 
-# Current version: 0.51 (May 3, 2014)
+# Current version: 0.6 (May 3, 2014)
 
 # Usage: python evolution.py <options> (not sure what all the options will be yet)
 
@@ -39,10 +39,10 @@ class Fish(pygame.sprite.Sprite):
 		self.rect.centery = random.randint(10, gs.height)
 
 		# Randomize the size of the fish (width = 1.5 * height)
-		height = random.randint(50, 150)
-		width = int(height * 1.5)
-		area = width * height
-		self.velocity = (150 * 150 * 1.5) / area
+		self.height = random.randint(20, 150)
+		self.width = int(self.height * 1.5)
+		self.area = self.width * self.height
+		self.velocity = (150 * 150 * 1.5) / self.area
 
 		# Keep original image to limit resize errors
 		self.orig_image = self.image
@@ -51,12 +51,14 @@ class Fish(pygame.sprite.Sprite):
 		if self.right:
 			self.dx = self.velocity
 			self.rect.centerx = -100
-			self.image = pygame.transform.scale(self.orig_image, (width, height))
+			self.image = pygame.transform.scale(self.orig_image, (self.width, self.height))
+			#self.rect = self.image.get_rect()
 		else:
 			self.dx = -1 * self.velocity
 			self.rect.centerx = gs.width + 100
 			#self.image = self.orig_flipped
-			self.image = pygame.transform.scale(self.orig_flipped, (width, height))
+			self.image = pygame.transform.scale(self.orig_flipped, (self.width, self.height))
+			#self.rect = self.image.get_rect()
 
 		#print "New fish of area " + str(width * height)
 
@@ -82,11 +84,23 @@ class Player(pygame.sprite.Sprite):
 		self.image = pygame.image.load("media/fish.png")
 		self.rect = self.image.get_rect()
 
-		self.velocity = 2
+		#self.velocity = 9
 		
 		# Keep original image to limit resize errors
 		self.orig_image = self.image
 		self.orig_flipped = pygame.transform.flip(self.orig_image, True, False)
+
+		self.width = 75
+		self.height = 50
+
+		self.right = pygame.transform.scale(self.orig_image, (self.width, self.height))
+		self.left = pygame.transform.scale(self.orig_flipped, (self.width, self.height))
+
+		self.area = self.width * self.height
+		self.velocity = (150 * 150 * 1.5) / self.area
+
+		self.image = self.right
+		self.rect = self.image.get_rect()
 
 		self.dx = 0
 		self.dy = 0
@@ -104,6 +118,46 @@ class Player(pygame.sprite.Sprite):
 		# Move the player based on keys pressed
 		self.rect = self.rect.move(self.dx, self.dy)
 
+		# Check for collisions with the computer fish
+		self.check_collisions()
+
+	def check_collisions(self):
+		# Check for collision with a fish, eat it if it's smaller
+		collide = self.rect.collidelist(self.gs.fish)
+		if collide != -1:
+			fishWidth = self.gs.fish[collide].width
+			fishHeight = self.gs.fish[collide].height
+			fishArea = fishWidth * fishHeight
+			self.area = self.width * self.height
+
+			print "Collision data:"
+			print "Player area: " + str(self.area)
+			print "Fish area: " + str(fishArea)
+
+			if fishArea < self.area:
+				print "Eating a fish!"
+
+				# Remove fish
+				del self.gs.fish[collide]
+
+				# Add 1/10th of height and width of the eaten fish to player's size
+				self.width += int(fishWidth / 10)
+				self.height += int(fishHeight / 10)
+
+				self.right = pygame.transform.scale(self.orig_image, (self.width, self.height))
+				self.left = pygame.transform.scale(self.orig_flipped, (self.width, self.height))
+
+				# Reset the current fish image
+				if self.dx < 0:
+					self.image = self.left
+				else:
+					self.image = self.right
+				
+				self.rect.width = self.width
+				self.rect.height = self.height
+
+
+
 
 	def move(self):
 		# This uses the bit vector style of moving, simply because it's easier than
@@ -116,14 +170,44 @@ class Player(pygame.sprite.Sprite):
 		# the fish go the other direction)
 		if pressed[pygame.K_RIGHT] and self.rect.right <= self.gs.width:
 			self.dx = self.velocity
-			self.image = self.orig_image
+			self.image = self.right
 		if pressed[pygame.K_LEFT] and self.rect.left >= 0:
 			self.dx = -1 * self.velocity
-			self.image = self.orig_flipped
+			self.image = self.left
 		if pressed[pygame.K_UP] and self.rect.top >= 0:
 			self.dy = -1 * self.velocity
 		if pressed[pygame.K_DOWN] and self.rect.bottom <= self.gs.height:
 			self.dy = self.velocity
+
+
+# Class to generate fish at random intervals based on the length of the game
+class FishGenerator:
+	def __init__(self, gs = None):
+		self.gs = gs
+		self.ticks = 0
+		self.maxfish = 2
+
+	def tick(self):
+		self.ticks += 1
+		self.setMaxFish()
+		# If not enough fish, 5% chance to generate a new fish
+		if len(self.gs.fish) < self.maxfish and random.random() >= 0.95:
+			self.gs.fish.append(Fish(self.gs))
+
+
+	# Function to set the maximum number of fish on the screen 
+	# based on the length of the game so far
+	def setMaxFish(self):
+		# 5 seconds
+		if self.ticks == 5 * 60:
+			self.maxfish = 4
+		# 15 seconds
+		elif self.ticks == 15 * 60:
+			self.maxfish = 8
+		# 30 seconds
+		elif self.ticks == 30 * 60:
+			self.maxfish = 15
+
 
 
 # Gamespace class for the main game
@@ -141,7 +225,7 @@ class GameSpace:
 				self.player.move()
 			elif event.type == pygame.MOUSEBUTTONDOWN:
 				#self.player.fire()
-				self.fish.append(Fish(self))
+				#self.fish.append(Fish(self))
 				pass
 			elif event.type == pygame.MOUSEBUTTONUP:
 				#self.player.stopFire()
@@ -152,6 +236,9 @@ class GameSpace:
 			l.tick()
 		for o in self.objects:
 			o.tick()
+
+		# Generate new fish
+		self.fish_generator.tick()
 		
 		# Display game objects
 		self.screen.fill(self.black)
@@ -194,6 +281,9 @@ class GameSpace:
 		#self.earth = Earth(self)
 		self.objects.append(self.player)
 		#self.objects.append(self.earth)
+
+		# Initialize the computer fish generator
+		self.fish_generator = FishGenerator(self)
 		
 		
 		# Start the game loop
