@@ -5,7 +5,7 @@
 # Authors: Nick Burns (nburns3@nd.edu, coriander-)
 #		   Zach Lipp (zlipp@nd.edu)
 
-# Current version: 0.10 (May 3, 2014)
+# Current version: 0.51 (May 3, 2014)
 
 # Usage: python evolution.py <options> (not sure what all the options will be yet)
 
@@ -21,6 +21,57 @@ from twisted.internet.defer import DeferredQueue
 # Misc imports
 import sys
 import math
+import random
+
+
+# Class for miscellaneous fish
+class Fish(pygame.sprite.Sprite):
+	def __init__(self, gs = None):
+		pygame.sprite.Sprite.__init__(self)
+		self.gs = gs
+		self.image = pygame.image.load("media/fish_red.png")
+		self.rect = self.image.get_rect()
+
+		#self.velocity = random.randint(1, 5)
+
+		# Determine whether the fish travels right or left
+		self.right = random.randint(0, 1)
+		self.rect.centery = random.randint(10, gs.height)
+
+		# Randomize the size of the fish (width = 1.5 * height)
+		height = random.randint(50, 150)
+		width = int(height * 1.5)
+		area = width * height
+		self.velocity = (150 * 150 * 1.5) / area
+
+		# Keep original image to limit resize errors
+		self.orig_image = self.image
+		self.orig_flipped = pygame.transform.flip(self.orig_image, True, False)
+
+		if self.right:
+			self.dx = self.velocity
+			self.rect.centerx = -100
+			self.image = pygame.transform.scale(self.orig_image, (width, height))
+		else:
+			self.dx = -1 * self.velocity
+			self.rect.centerx = gs.width + 100
+			#self.image = self.orig_flipped
+			self.image = pygame.transform.scale(self.orig_flipped, (width, height))
+
+		#print "New fish of area " + str(width * height)
+
+	def tick(self):
+		# Move the fish
+		# Move the player based on keys pressed
+		self.rect = self.rect.move(self.dx, 0)
+
+		# Determine if fish has traveled too far off screen and should be destroyed
+		if self.right:
+			if self.rect.left > self.gs.width:
+				self.gs.fish.remove(self)
+		else:
+			if self.rect.right < 0:
+				self.gs.fish.remove(self)
 
 
 # Player class
@@ -35,6 +86,7 @@ class Player(pygame.sprite.Sprite):
 		
 		# Keep original image to limit resize errors
 		self.orig_image = self.image
+		self.orig_flipped = pygame.transform.flip(self.orig_image, True, False)
 
 		self.dx = 0
 		self.dy = 0
@@ -60,19 +112,60 @@ class Player(pygame.sprite.Sprite):
 		self.dx = 0
 		self.dy = 0
 
-		# Set the movement direction based on the keys pressed
-		if pressed[pygame.K_RIGHT]:
+		# Set the movement direction based on the keys pressed (also make
+		# the fish go the other direction)
+		if pressed[pygame.K_RIGHT] and self.rect.right <= self.gs.width:
 			self.dx = self.velocity
-		if pressed[pygame.K_LEFT]:
+			self.image = self.orig_image
+		if pressed[pygame.K_LEFT] and self.rect.left >= 0:
 			self.dx = -1 * self.velocity
-		if pressed[pygame.K_UP]:
+			self.image = self.orig_flipped
+		if pressed[pygame.K_UP] and self.rect.top >= 0:
 			self.dy = -1 * self.velocity
-		if pressed[pygame.K_DOWN]:
+		if pressed[pygame.K_DOWN] and self.rect.bottom <= self.gs.height:
 			self.dy = self.velocity
 
 
 # Gamespace class for the main game
 class GameSpace:
+	# Function to call each game loop (for networking integration)
+	# Returns true if game should quit, false otherwise
+	def loop_iteration(self):
+		# Handle input
+
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+				return True
+				#break
+			elif event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
+				self.player.move()
+			elif event.type == pygame.MOUSEBUTTONDOWN:
+				#self.player.fire()
+				self.fish.append(Fish(self))
+				pass
+			elif event.type == pygame.MOUSEBUTTONUP:
+				#self.player.stopFire()
+				pass
+		
+		# Send a tick to every game object
+		for l in self.fish:
+			l.tick()
+		for o in self.objects:
+			o.tick()
+		
+		# Display game objects
+		self.screen.fill(self.black)
+		self.screen.blit(self.backdrop, (0,0))
+		for l in self.fish:
+			self.screen.blit(l.image, l.rect)
+		for o in self.objects:
+			self.screen.blit(o.image, o.rect)
+		
+		pygame.display.flip()
+
+		return False
+
+
 	def main(self):
 		# Basic intialization
 		pygame.init()
@@ -83,7 +176,7 @@ class GameSpace:
 		self.backdrop = pygame.image.load("media/background.png")
 
 		# Object arrays
-		self.lasers = []
+		self.fish = []
 		self.objects = []
 		
 		self.screen = pygame.display.set_mode(self.size)
@@ -108,36 +201,9 @@ class GameSpace:
 		while quit == False:
 			# Set clock tick regulation
 			self.clock.tick(60)
+
+			quit = self.loop_iteration()
 			
-			# Handle input
-			for event in pygame.event.get():
-				if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-					quit = True
-					break
-				elif event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
-					self.player.move()
-				elif event.type == pygame.MOUSEBUTTONDOWN:
-					#self.player.fire()
-					pass
-				elif event.type == pygame.MOUSEBUTTONUP:
-					#self.player.stopFire()
-					pass
-			
-			# Send a tick to every game object
-			for l in self.lasers:
-				l.tick()
-			for o in self.objects:
-				o.tick()
-			
-			# Display game objects
-			self.screen.fill(self.black)
-			self.screen.blit(self.backdrop, (0,0))
-			for o in self.objects:
-				self.screen.blit(o.image, o.rect)
-			for l in self.lasers:
-				self.screen.blit(l.image, l.rect)
-			
-			pygame.display.flip()
 
 		# Quit the game
 		pygame.quit()
@@ -149,6 +215,9 @@ if __name__ == "__main__":
 	if len(args) != 2:
 		print "Usage: python " + str(args[0]) + " <host|client>"
 		sys.exit(1)
+
+	# Seed the random number generator
+	random.seed()
 
 	# Setup pygame stuff, initialize the game
 	gs = GameSpace()
