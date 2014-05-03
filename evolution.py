@@ -35,6 +35,7 @@ class Player(pygame.sprite.Sprite):
 		
 		# Keep original image to limit resize errors
 		self.orig_image = self.image
+		self.orig_flipped = pygame.transform.flip(self.orig_image, True, False)
 
 		self.dx = 0
 		self.dy = 0
@@ -60,14 +61,17 @@ class Player(pygame.sprite.Sprite):
 		self.dx = 0
 		self.dy = 0
 
-		# Set the movement direction based on the keys pressed
-		if pressed[pygame.K_RIGHT]:
+		# Set the movement direction based on the keys pressed (also make
+		# the fish go the other direction)
+		if pressed[pygame.K_RIGHT] and self.rect.right <= self.gs.width:
 			self.dx = self.velocity
-		if pressed[pygame.K_LEFT]:
+			self.image = self.orig_image
+		if pressed[pygame.K_LEFT] and self.rect.left >= 0:
 			self.dx = -1 * self.velocity
-		if pressed[pygame.K_UP]:
+			self.image = self.orig_flipped
+		if pressed[pygame.K_UP] and self.rect.top >= 0:
 			self.dy = -1 * self.velocity
-		if pressed[pygame.K_DOWN]:
+		if pressed[pygame.K_DOWN] and self.rect.bottom <= self.gs.height:
 			self.dy = self.velocity
 
 
