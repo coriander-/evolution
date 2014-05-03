@@ -78,8 +78,9 @@ class GameSpace:
 		pygame.init()
 		pygame.key.set_repeat(25, 25)
 		
-		self.size = self.width, self.height = 640, 480
+		self.size = self.width, self.height = 1000, 480
 		self.black = 0, 0, 0
+		self.backdrop = pygame.image.load("media/background.png")
 
 		# Object arrays
 		self.lasers = []
@@ -130,6 +131,7 @@ class GameSpace:
 			
 			# Display game objects
 			self.screen.fill(self.black)
+			self.screen.blit(self.backdrop, (0,0))
 			for o in self.objects:
 				self.screen.blit(o.image, o.rect)
 			for l in self.lasers:
