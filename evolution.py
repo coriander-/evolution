@@ -5,7 +5,7 @@
 # Authors: Nick Burns (nburns3@nd.edu, coriander-)
 #		   Zach Lipp (zlipp@nd.edu)
 
-# Current version: 0.50 (May 3, 2014)
+# Current version: 0.51 (May 3, 2014)
 
 # Usage: python evolution.py <options> (not sure what all the options will be yet)
 
@@ -32,11 +32,17 @@ class Fish(pygame.sprite.Sprite):
 		self.image = pygame.image.load("media/fish_red.png")
 		self.rect = self.image.get_rect()
 
-		self.velocity = random.randint(1, 5)
+		#self.velocity = random.randint(1, 5)
 
 		# Determine whether the fish travels right or left
 		self.right = random.randint(0, 1)
 		self.rect.centery = random.randint(10, gs.height)
+
+		# Randomize the size of the fish (width = 1.5 * height)
+		height = random.randint(50, 150)
+		width = int(height * 1.5)
+		area = width * height
+		self.velocity = (150 * 150 * 1.5) / area
 
 		# Keep original image to limit resize errors
 		self.orig_image = self.image
@@ -45,11 +51,14 @@ class Fish(pygame.sprite.Sprite):
 		if self.right:
 			self.dx = self.velocity
 			self.rect.centerx = -100
+			self.image = pygame.transform.scale(self.orig_image, (width, height))
 		else:
 			self.dx = -1 * self.velocity
 			self.rect.centerx = gs.width + 100
-			self.image = self.orig_flipped
-			#self.image = pygame.transform.scale(self.orig_flipped, (100, 50))
+			#self.image = self.orig_flipped
+			self.image = pygame.transform.scale(self.orig_flipped, (width, height))
+
+		#print "New fish of area " + str(width * height)
 
 	def tick(self):
 		# Move the fish
