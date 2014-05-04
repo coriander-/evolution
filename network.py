@@ -56,7 +56,15 @@ class Prot(protocol.Protocol):
             #self.transport.write("Failed to get update")
 
 #factory to create connection
-class Factory(protocol.Factory):
+class Server(protocol.Factory):
+    def buildProtocol(self, addr):    
+        return Prot(self.q, self.game)
+
+    def clientConnectionFailed(self, connector, reason):
+        print "Connection failed"
+
+#factory to create connection
+class Client(protocol.ClientFactory):
     def buildProtocol(self, addr):    
         return Prot(self.q, self.game)
 
@@ -65,13 +73,14 @@ class Factory(protocol.Factory):
 
 #pass port in commandline
 if __name__=='__main__':
-    f=Factory()
     try:
         if sys.argv[1] == 'client':
             client = True
+            f = Client()
             reactor.connectTCP(sys.argv[2], int(sys.argv[3]), f)
         elif sys.argv[1] == 'server':
             client = False
+            f = Server()
             reactor.listenTCP(int(sys.argv[2]), f)
         else:
             raise Exception('not server or client')
