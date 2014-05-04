@@ -404,8 +404,8 @@ class GameSpace:
 				newFish.height = height
 				newFish.width = self.game_state.fish_width.pop(0)
 				#newFish.dx = self.game_state.fish_dx.pop(0)
-				newFish.x = self.game_state.fish_x.pop(0)
-				newFish.y = self.game_state.fish_y.pop(0)
+				newFish.rect.centerx = self.game_state.fish_x.pop(0)
+				newFish.rect.centery = self.game_state.fish_y.pop(0)
 				self.fish.append(newFish)
 
 		self.opponent.height = self.game_state.opponent_height
