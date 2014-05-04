@@ -125,12 +125,12 @@ class Player(pygame.sprite.Sprite):
 
 	def check_collisions(self):
 		# Check for collision with a fish, eat it if it's smaller
+		self.area = self.width * self.height
 		collide = self.rect.collidelist(self.gs.fish)
 		if collide != -1:
 			fishWidth = self.gs.fish[collide].width
 			fishHeight = self.gs.fish[collide].height
 			fishArea = fishWidth * fishHeight
-			self.area = self.width * self.height
 
 			#print "Collision data:"
 			#print "Player area: " + str(self.area)
@@ -155,9 +155,23 @@ class Player(pygame.sprite.Sprite):
 				else:
 					self.image = self.right
 				
+				# Set the proper size
 				self.rect.width = self.width
 				self.rect.height = self.height
+				self.area = self.width * self.height
 
+		# Now check for collision with the other player, eat it and game over if bigger
+		collidePlayer = self.rect.colliderect(self.gs.opponent.rect)
+		if collidePlayer:
+			#print "Collide is " + str(collide)
+			#print "Number of objects is " + str(len(self.gs.objects))
+			fishArea = self.gs.opponent.area
+			if fishArea > self.area:
+				print "Other player wins!"
+				self.gs.reset()
+			elif self.area > fishArea:
+				print "You win!"
+				self.gs.reset()
 
 
 
@@ -286,6 +300,7 @@ class GameSpace:
 
 		# Set the player based on the command line arg
 		self.player = self.player1
+		self.opponent = self.player2
 
 		# Initialize the computer fish generator
 		self.fish_generator = FishGenerator(self)
@@ -302,6 +317,10 @@ class GameSpace:
 
 		# Quit the game
 		pygame.quit()
+
+	# Function to set up the gamespace
+	def reset(self):
+		pass
 
 
 if __name__ == "__main__":
