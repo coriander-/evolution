@@ -26,57 +26,20 @@ import random
 
 # Class to store the game state in
 class GameState:
-	def __init__(self, gs = None):
-		#self.gs = gs
+	def __init__(self):
 
 		self.fish_height = []
 		self.fish_width = []
 		self.fish_dx = []
-		#self.fish_x = []
-		#self.fish_y = []
+		self.fish_x = []
+		self.fish_y = []
 
 		self.player_height = []
 		self.player_width = []
 		self.player_dx = []
 		self.player_dy = []
-		#self.player_x = []
-		#self.player_y = []
-
-	# Store all necessary elements from the gamespace to the state
-	def pack(self):
-		# Fish array
-		for fish in self.gs.fish:
-			self.fish_height.append(fish.height)
-			self.fish_width.append(fish.width)
-			self.fish_dx.append(fish.dx)
-			#self.fish_x.append(fish.rect.centerx)
-			#self.fish_y.append(fish.rect.centery)
-
-		# Objects array
-		for player in self.gs.objects:
-			self.player_height.append(player.height)
-			self.player_width.append(player.width)
-			self.player_dx.append(player.dx)
-			self.player_dy.append(player.dy)
-			#self.player_x.append(player.rect.centerx)
-			#self.player_y.append(player.rect.centery)
-
-	# Save all necessary elements to the gamespace from the state
-	def unpack(self):
-		for fish in self.gs.fish:
-			fish.height = self.fish_height.pop(0)
-			fish.width = self.fish_width.pop(0)
-			fish.dx = self.fish_dx.pop(0)
-			#fish.x = self.fish_x.pop(0)
-			#fish.y = self.fish_y.pop(0)
-
-		for player in self.gs.objects:
-			player.height = self.player_height.pop(0)
-			player.width = self.player_width.pop(0)
-			player.dx = self.player_dx.pop(0)
-			player.dy = self.player_dy.pop(0)
-			#player.x = self.player_x.pop(0)
-			#player.y = self.player_y.pop(0)
+		self.player_x = []
+		self.player_y = []
 
 
 # Class for miscellaneous fish
@@ -399,6 +362,53 @@ class GameSpace:
 
 		# Initialize the computer fish generator
 		self.fish_generator = FishGenerator(self)
+
+	def pack(self):
+		# Clear all arrays in the game state
+		del self.game_state.fish_height[:]
+		del self.game_state.fish_width[:]
+		del self.game_state.fish_dx[:]
+		del self.game_state.fish_x[:]
+		del self.game_state.fish_y[:]
+		del self.game_state.player_height[:]
+		del self.game_state.player_weight[:]
+		del self.game_state.player_dx[:]
+		del self.game_state.player_dy[:]
+		del self.game_state.player_x[:]
+		del self.game_state.player_y[:]
+
+		# Fish array
+		for fish in self.fish:
+			self.game_state.fish_height.append(fish.height)
+			self.game_state.fish_width.append(fish.width)
+			self.game_state.fish_dx.append(fish.dx)
+			self.game_state.fish_x.append(fish.rect.centerx)
+			self.game_state.fish_y.append(fish.rect.centery)
+
+		# Objects array
+		for player in self.gs.objects:
+			self.game_state.player_height.append(player.height)
+			self.game_state.player_width.append(player.width)
+			self.game_state.player_dx.append(player.dx)
+			self.game_state.player_dy.append(player.dy)
+			self.game_state.player_x.append(player.rect.centerx)
+			self.game_state.player_y.append(player.rect.centery)
+
+	def unpack(self):
+		for fish in self.gs.fish:
+			fish.height = self.game_state.fish_height.pop(0)
+			fish.width = self.game_state.fish_width.pop(0)
+			fish.dx = self.game_state.fish_dx.pop(0)
+			fish.x = self.game_state.fish_x.pop(0)
+			fish.y = self.game_state.fish_y.pop(0)
+
+		for player in self.gs.objects:
+			player.height = self.game_state.player_height.pop(0)
+			player.width = self.game_state.player_width.pop(0)
+			player.dx = self.game_state.player_dx.pop(0)
+			player.dy = self.game_state.player_dy.pop(0)
+			player.x = self.game_state.player_x.pop(0)
+			player.y = self.game_state.player_y.pop(0)
 
 
 if __name__ == "__main__":
