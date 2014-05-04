@@ -288,8 +288,9 @@ class GameSpace:
 		# Display game objects
 		self.screen.fill(self.black)
 		self.screen.blit(self.backdrop, (0,0))
-		for l in self.fish:
-			self.screen.blit(l.image, l.rect)
+		if self.isPlayer1:
+			for l in self.fish:
+				self.screen.blit(l.image, l.rect)
 		for o in self.objects:
 			self.screen.blit(o.image, o.rect)
 		
@@ -402,7 +403,7 @@ class GameSpace:
 				newFish = Fish(self)
 				newFish.height = height
 				newFish.width = self.game_state.fish_width.pop(0)
-				newFish.dx = self.game_state.fish_dx.pop(0)
+				#newFish.dx = self.game_state.fish_dx.pop(0)
 				newFish.x = self.game_state.fish_x.pop(0)
 				newFish.y = self.game_state.fish_y.pop(0)
 				self.fish.append(newFish)
