@@ -10,9 +10,8 @@ import pygame
 
 #protocol for server and client
 class Prot(protocol.Protocol):
-    def __init__(self,q, game):
-        self.q = q
-        self.game = game
+    def __init__(self):
+        self.q = DeferredQueue() 
 
     def dataReceived(self, data):#when data received
         recv = pickle.loads(data)#load game state and set game state
@@ -23,6 +22,12 @@ class Prot(protocol.Protocol):
 
     def connectionMade(self):
         print "Connection made"
+        #create game and set as self.game
+        if client:
+            self.game = GameSpace(self.q, False);# every time game is change call q.put()
+        else:
+            self.game = GameSpace(self.q, True);# every time game is change call q.put()
+
         #create loopingCall
         self.lc =LoopingCall(self.game.loop_iteration)
         self.lc.start(1/60)
@@ -52,12 +57,6 @@ class Prot(protocol.Protocol):
 
 #factory to create connection
 class Factory(protocol.Factory):
-    def __init__(self):
-        self.q = DeferredQueue() 
-        
-        #create game and set as self.game
-        self.game = GameSpace(self.q, True);# every time game is change call q.put()
-
     def buildProtocol(self, addr):    
         return Prot(self.q, self.game)
 
