@@ -293,17 +293,7 @@ class GameSpace:
 		
 		# Set up the game objects
 		self.clock = pygame.time.Clock()
-		self.player1 = Player(self, 50, 50)
-		self.player2 = Player(self, 900, 400)
-		self.objects.append(self.player1)
-		self.objects.append(self.player2)
-
-		# Set the player based on the command line arg
-		self.player = self.player1
-		self.opponent = self.player2
-
-		# Initialize the computer fish generator
-		self.fish_generator = FishGenerator(self)
+		self.reset()
 		
 		
 		# Start the game loop
@@ -320,7 +310,22 @@ class GameSpace:
 
 	# Function to set up the gamespace
 	def reset(self):
-		pass
+		# Empty the fish and object lists
+		del self.fish[:]
+		del self.objects[:]
+
+		# Set up all game objects
+		self.player1 = Player(self, 50, 50)
+		self.player2 = Player(self, 900, 400)
+		self.objects.append(self.player1)
+		self.objects.append(self.player2)
+
+		# Set the player based on the command line arg
+		self.player = self.player1
+		self.opponent = self.player2
+
+		# Initialize the computer fish generator
+		self.fish_generator = FishGenerator(self)
 
 
 if __name__ == "__main__":
