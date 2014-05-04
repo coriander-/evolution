@@ -395,15 +395,17 @@ class GameSpace:
 		self.game_state.opponent_y = self.player.rect.centery
 
 	def unpack(self):
-		# Make sure all lists aren't empty before popping
-		# (if list is empty, delete fish?)
-		for fish in self.fish:
-			if self.game_state.fish_height:
-				fish.height = self.game_state.fish_height.pop(0)
-				fish.width = self.game_state.fish_width.pop(0)
-				fish.dx = self.game_state.fish_dx.pop(0)
-				fish.x = self.game_state.fish_x.pop(0)
-				fish.y = self.game_state.fish_y.pop(0)
+		# Delete all fish and re-initialize
+		if not self.isPlayer1:
+			del self.fish[:]
+			for height in self.game_state.fish_height:
+				newFish = Fish(self)
+				newFish.height = height
+				newFish.width = self.game_state.fish_width.pop(0)
+				newFish.dx = self.game_state.fish_dx.pop(0)
+				newFish.x = self.game_state.fish_x.pop(0)
+				newFish.y = self.game_state.fish_y.pop(0)
+				self.fish.append(newFish)
 
 		self.opponent.height = self.game_state.opponent_height
 		self.opponent.width = self.game_state.opponent_width
