@@ -14,8 +14,11 @@ class Prot(protocol.Protocol):
         self.q = DeferredQueue() 
 
     def dataReceived(self, data):#when data received
-        recv = pickle.loads(data)#load game state and set game state
-        
+        try:
+            recv = pickle.loads(data)#load game state and set game state
+        except Exception as ex:
+            print 'Pickle done messed up: ' + str(ex)
+
         #adjust other player
         self.game.game_state = recv
         self.game.unpack()
