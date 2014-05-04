@@ -27,7 +27,7 @@ import random
 # Class to store the game state in
 class GameState:
 	def __init__(self, gs = None):
-		self.gs = gs
+		#self.gs = gs
 
 		self.fish_height = []
 		self.fish_width = []
