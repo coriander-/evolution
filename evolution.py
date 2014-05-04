@@ -39,8 +39,8 @@ class GameState:
 		self.player_width = []
 		self.player_dx = []
 		self.player_dy = []
-		self.player_x = []
-		self.player_y = []
+		#self.player_x = []
+		#self.player_y = []
 
 	# Store all necessary elements from the gamespace to the state
 	def pack(self):
@@ -49,8 +49,8 @@ class GameState:
 			self.fish_height.append(fish.height)
 			self.fish_width.append(fish.width)
 			self.fish_dx.append(fish.dx)
-			self.fish_x.append(fish.rect.centerx)
-			self.fish_y.append(fish.rect.centery)
+			#self.fish_x.append(fish.rect.centerx)
+			#self.fish_y.append(fish.rect.centery)
 
 		# Objects array
 		for player in self.gs.objects:
@@ -58,8 +58,8 @@ class GameState:
 			self.player_width.append(player.width)
 			self.player_dx.append(player.dx)
 			self.player_dy.append(player.dy)
-			self.player_x.append(player.rect.centerx)
-			self.player_y.append(player.rect.centery)
+			#self.player_x.append(player.rect.centerx)
+			#self.player_y.append(player.rect.centery)
 
 	# Save all necessary elements to the gamespace from the state
 	def unpack(self):
@@ -67,17 +67,16 @@ class GameState:
 			fish.height = self.fish_height.pop(0)
 			fish.width = self.fish_width.pop(0)
 			fish.dx = self.fish_dx.pop(0)
-			fish.x = self.fish_x.pop(0)
-			fish.y = self.fish_y.pop(0)
+			#fish.x = self.fish_x.pop(0)
+			#fish.y = self.fish_y.pop(0)
 
 		for player in self.gs.objects:
-			#player.setSize(self.player_width.pop(0), self.player_height.pop(0))
 			player.height = self.player_height.pop(0)
 			player.width = self.player_width.pop(0)
 			player.dx = self.player_dx.pop(0)
 			player.dy = self.player_dy.pop(0)
-			player.x = self.player_x.pop(0)
-			player.y = self.player_y.pop(0)
+			#player.x = self.player_x.pop(0)
+			#player.y = self.player_y.pop(0)
 
 
 # Class for miscellaneous fish
