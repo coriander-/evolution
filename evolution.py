@@ -273,8 +273,9 @@ class GameSpace:
 				pass
 		
 		# Send a tick to every game object
-		for l in self.fish:
-			l.tick()
+		if self.isPlayer1:
+			for l in self.fish:
+				l.tick()
 		for o in self.objects:
 			o.tick()
 
@@ -288,9 +289,8 @@ class GameSpace:
 		# Display game objects
 		self.screen.fill(self.black)
 		self.screen.blit(self.backdrop, (0,0))
-		if self.isPlayer1:
-			for l in self.fish:
-				self.screen.blit(l.image, l.rect)
+		for l in self.fish:
+			self.screen.blit(l.image, l.rect)
 		for o in self.objects:
 			self.screen.blit(o.image, o.rect)
 		
