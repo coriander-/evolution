@@ -386,7 +386,7 @@ class GameSpace:
 			self.game_state.fish_y.append(fish.rect.centery)
 
 		# Objects array
-		for player in self.gs.objects:
+		for player in self.objects:
 			self.game_state.player_height.append(player.height)
 			self.game_state.player_width.append(player.width)
 			self.game_state.player_dx.append(player.dx)
@@ -395,14 +395,14 @@ class GameSpace:
 			self.game_state.player_y.append(player.rect.centery)
 
 	def unpack(self):
-		for fish in self.gs.fish:
+		for fish in self.fish:
 			fish.height = self.game_state.fish_height.pop(0)
 			fish.width = self.game_state.fish_width.pop(0)
 			fish.dx = self.game_state.fish_dx.pop(0)
 			fish.x = self.game_state.fish_x.pop(0)
 			fish.y = self.game_state.fish_y.pop(0)
 
-		for player in self.gs.objects:
+		for player in self.objects:
 			player.height = self.game_state.player_height.pop(0)
 			player.width = self.game_state.player_width.pop(0)
 			player.dx = self.game_state.player_dx.pop(0)
