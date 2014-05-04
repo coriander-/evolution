@@ -291,17 +291,16 @@ class GameSpace:
 		self.screen = pygame.display.set_mode(self.size)
 		pygame.display.set_caption("Evolution - Eat or be eaten")
 
+		# Set up the game objects
+		self.clock = pygame.time.Clock()
+		self.reset()
+
 		# Set up sounds
 		#pygame.mixer.init()
 		#self.explodeSound = pygame.mixer.Sound("explode.wav")
 		#self.laserSound = pygame.mixer.Sound("screammachine.wav")
 
 	def main(self):	
-		# Set up the game objects
-		self.clock = pygame.time.Clock()
-		self.reset()
-		
-		
 		# Start the game loop
 		quit = False
 		while quit == False:
