@@ -87,7 +87,8 @@ class Fish(pygame.sprite.Sprite):
 			self.rect.centery = y
 
 			self.area = self.width * self.height
-			self.velocity = int(150 * 150 * 1.5) / self.area
+			print "Area: " + str(self.area)
+			self.velocity = (150 * 150 * 1.5) / self.area
 
 			if dx > 0:
 				self.image = pygame.transform.scale(self.orig_image, (self.width, self.height))
