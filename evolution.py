@@ -395,20 +395,24 @@ class GameSpace:
 			self.game_state.player_y.append(player.rect.centery)
 
 	def unpack(self):
+		# Make sure all lists aren't empty before popping
+		# (if list is empty, delete fish?)
 		for fish in self.fish:
-			fish.height = self.game_state.fish_height.pop(0)
-			fish.width = self.game_state.fish_width.pop(0)
-			fish.dx = self.game_state.fish_dx.pop(0)
-			fish.x = self.game_state.fish_x.pop(0)
-			fish.y = self.game_state.fish_y.pop(0)
+			if self.game_state.fish_height:
+				fish.height = self.game_state.fish_height.pop(0)
+				fish.width = self.game_state.fish_width.pop(0)
+				fish.dx = self.game_state.fish_dx.pop(0)
+				fish.x = self.game_state.fish_x.pop(0)
+				fish.y = self.game_state.fish_y.pop(0)
 
 		for player in self.objects:
-			player.height = self.game_state.player_height.pop(0)
-			player.width = self.game_state.player_width.pop(0)
-			player.dx = self.game_state.player_dx.pop(0)
-			player.dy = self.game_state.player_dy.pop(0)
-			player.x = self.game_state.player_x.pop(0)
-			player.y = self.game_state.player_y.pop(0)
+			if self.game_state.player_height:
+				player.height = self.game_state.player_height.pop(0)
+				player.width = self.game_state.player_width.pop(0)
+				player.dx = self.game_state.player_dx.pop(0)
+				player.dy = self.game_state.player_dy.pop(0)
+				player.x = self.game_state.player_x.pop(0)
+				player.y = self.game_state.player_y.pop(0)
 
 
 if __name__ == "__main__":
