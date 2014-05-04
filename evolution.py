@@ -232,7 +232,7 @@ class FishGenerator:
 		self.setMaxFish()
 		# If not enough fish, 5% chance to generate a new fish
 		if len(self.gs.fish) < self.maxfish and random.random() >= 0.95:
-			self.gs.fish = self.Fish(self.gs))
+			self.gs.fish.append(Fish(self.gs))
 
 
 	# Function to set the maximum number of fish on the screen 
