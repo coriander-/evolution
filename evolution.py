@@ -44,41 +44,59 @@ class GameState:
 
 # Class for miscellaneous fish
 class Fish(pygame.sprite.Sprite):
-	def __init__(self, gs = None):
+	def __init__(self, gs = None, height = 0, width = 0, dx = 0, x = 0, y = 0):
 		pygame.sprite.Sprite.__init__(self)
 		self.gs = gs
 		self.image = pygame.image.load("media/fish_red.png")
 		self.rect = self.image.get_rect()
 
-		#self.velocity = random.randint(1, 5)
-
-		# Determine whether the fish travels right or left
-		self.right = random.randint(0, 1)
-		self.rect.centery = random.randint(10, gs.height)
-
-		# Randomize the size of the fish (width = 1.5 * height)
-		self.height = random.randint(20, 150)
-		self.width = int(self.height * 1.5)
-		self.area = self.width * self.height
-		self.velocity = (150 * 150 * 1.5) / self.area
-
 		# Keep original image to limit resize errors
 		self.orig_image = self.image
 		self.orig_flipped = pygame.transform.flip(self.orig_image, True, False)
 
-		if self.right:
-			self.dx = self.velocity
-			self.rect.centerx = -100
-			self.image = pygame.transform.scale(self.orig_image, (self.width, self.height))
-			#self.rect = self.image.get_rect()
-		else:
-			self.dx = -1 * self.velocity
-			self.rect.centerx = gs.width + 100
-			#self.image = self.orig_flipped
-			self.image = pygame.transform.scale(self.orig_flipped, (self.width, self.height))
-			#self.rect = self.image.get_rect()
+		if self.gs.isPlayer1:
+			# Determine whether the fish travels right or left
+			self.right = random.randint(0, 1)
+			self.rect.centery = random.randint(10, gs.height)
 
-		#print "New fish of area " + str(width * height)
+			# Randomize the size of the fish (width = 1.5 * height)
+			self.height = random.randint(20, 150)
+			self.width = int(self.height * 1.5)
+			self.area = self.width * self.height
+			self.velocity = (150 * 150 * 1.5) / self.area
+
+
+			if self.right:
+				self.dx = self.velocity
+				self.rect.centerx = -100
+				self.image = pygame.transform.scale(self.orig_image, (self.width, self.height))
+				#self.rect = self.image.get_rect()
+			else:
+				self.dx = -1 * self.velocity
+				self.rect.centerx = gs.width + 100
+				#self.image = self.orig_flipped
+				self.image = pygame.transform.scale(self.orig_flipped, (self.width, self.height))
+				#self.rect = self.image.get_rect()
+
+		else:
+			# set everything if we're not the server
+			self.height = height
+			self.width = width
+			self.dx = dx
+			self.rect.centerx = x
+			self.rect.centery = y
+
+			self.area = self.width * self.height
+			self.velocity = (150 * 150 * 1.5) / self.area
+
+			if dx > 0:
+				self.image = pygame.transform.scale(self.orig_image, (self.width, self.height))
+			else:
+				self.image = pygame.transform.scale(self.orig_flipped, (self.width, self.height))
+
+
+
+
 
 	def tick(self):
 		# Move the fish
