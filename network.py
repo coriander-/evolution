@@ -19,6 +19,7 @@ class Prot(protocol.Protocol):
         #adjust other player
         #self.game.game_state = recv
         #self.game.game_state.unpack()
+        #print "received: "+str(recv)
         recv.unpack()
 
     def connectionMade(self):
@@ -47,9 +48,9 @@ class Prot(protocol.Protocol):
     def ForwardData(self, data):
         try:
             #send player and computer array
-            toSend = self.game.game_state.pack()
+            self.game.game_state.pack()
             
-            w = pickle.dumps(toSend) #serialize 
+            w = pickle.dumps(self.game.game_state) #serialize 
             self.transport.write(w) #send game state
             self.q.get().addCallback(self.ForwardData)
         except Exception as ex:
