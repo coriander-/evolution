@@ -5,7 +5,7 @@
 # Authors: Nick Burns (nburns3@nd.edu, coriander-)
 #		   Zach Lipp (zlipp@nd.edu)
 
-# Current version: 0.6 (May 3, 2014)
+# Current version: 0.61 (May 3, 2014)
 
 # Usage: python evolution.py <options> (not sure what all the options will be yet)
 
@@ -78,7 +78,7 @@ class Fish(pygame.sprite.Sprite):
 
 # Player class
 class Player(pygame.sprite.Sprite):
-	def __init__(self, gs = None):
+	def __init__(self, gs = None, xstart = 50, ystart = 50):
 		pygame.sprite.Sprite.__init__(self)
 		self.gs = gs
 		self.image = pygame.image.load("media/fish.png")
@@ -101,6 +101,8 @@ class Player(pygame.sprite.Sprite):
 
 		self.image = self.right
 		self.rect = self.image.get_rect()
+		self.rect.centerx = xstart
+		self.rect.centery = ystart
 
 		self.dx = 0
 		self.dy = 0
@@ -130,12 +132,12 @@ class Player(pygame.sprite.Sprite):
 			fishArea = fishWidth * fishHeight
 			self.area = self.width * self.height
 
-			print "Collision data:"
-			print "Player area: " + str(self.area)
-			print "Fish area: " + str(fishArea)
+			#print "Collision data:"
+			#print "Player area: " + str(self.area)
+			#print "Fish area: " + str(fishArea)
 
 			if fishArea < self.area:
-				print "Eating a fish!"
+				#print "Eating a fish!"
 
 				# Remove fish
 				del self.gs.fish[collide]
@@ -277,10 +279,13 @@ class GameSpace:
 		
 		# Set up the game objects
 		self.clock = pygame.time.Clock()
-		self.player = Player(self)
-		#self.earth = Earth(self)
-		self.objects.append(self.player)
-		#self.objects.append(self.earth)
+		self.player1 = Player(self, 50, 50)
+		self.player2 = Player(self, 900, 400)
+		self.objects.append(self.player1)
+		self.objects.append(self.player2)
+
+		# Set the player based on the command line arg
+		self.player = self.player1
 
 		# Initialize the computer fish generator
 		self.fish_generator = FishGenerator(self)
