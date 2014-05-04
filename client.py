@@ -50,7 +50,7 @@ class Client(protocol.ClientFactory):
         self.game = GameSpace(self.q, False) # every time game is change call q.put()
 
         #create loopingCall
-        self.lc =LoopingCall(self.game.loop_iteration,None, None)
+        self.lc =LoopingCall(self.game.loop_iteration)
         self.lc.start(1/60)
 
     def buildProtocol(self, addr):    
@@ -67,5 +67,5 @@ if __name__=='__main__':
         print 'usage: python client.py <hostname> <port>'
     else:
         f = Client(sys.argv[1], sys.argv[2])
-        reactor.connectTCP(host, int(port), f)
+        reactor.connectTCP(sys.argv[1], int(sys.argv[2]), f)
         reactor.run()
