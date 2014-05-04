@@ -17,11 +17,9 @@ class Prot(protocol.Protocol):
         recv = pickle.loads(data)#load game state and set game state
         
         #adjust other player
-        #self.game.game_state = recv
-        #self.game.game_state.unpack()
-        #print "received: "+str(recv)
-        recv.unpack()
-
+        self.game.game_state = recv
+        self.game.unpack()
+        
     def connectionMade(self):
         print "Connection made"
         #create game and set as self.game
@@ -48,7 +46,7 @@ class Prot(protocol.Protocol):
     def ForwardData(self, data):
         try:
             #send player and computer array
-            self.game.game_state.pack()
+            self.game.pack()
             
             w = pickle.dumps(self.game.game_state) #serialize 
             self.transport.write(w) #send game state
