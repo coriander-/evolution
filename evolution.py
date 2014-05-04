@@ -231,6 +231,7 @@ class GameSpace:
 	# Function to call each game loop (for networking integration)
 	# Returns true if game should quit, false otherwise
 	def loop_iteration(self):
+
 		# Handle input
 
 		for event in pygame.event.get():
@@ -256,6 +257,9 @@ class GameSpace:
 		# Generate new fish
 		self.fish_generator.tick()
 		
+		#add to queue, send data
+		self.q.put('1')
+
 		# Display game objects
 		self.screen.fill(self.black)
 		self.screen.blit(self.backdrop, (0,0))
@@ -265,15 +269,15 @@ class GameSpace:
 			self.screen.blit(o.image, o.rect)
 		
 		pygame.display.flip()
-
 		return False
 
 
-	def main(self):
+	def __init__(self, q):
 		# Basic intialization
 		pygame.init()
 		pygame.key.set_repeat(25, 25)
 		
+		self.q = q
 		self.size = self.width, self.height = 1000, 480
 		self.black = 0, 0, 0
 		self.backdrop = pygame.image.load("media/background.png")
@@ -290,7 +294,7 @@ class GameSpace:
 		#self.explodeSound = pygame.mixer.Sound("explode.wav")
 		#self.laserSound = pygame.mixer.Sound("screammachine.wav")
 
-		
+	def main(self):	
 		# Set up the game objects
 		self.clock = pygame.time.Clock()
 		self.reset()

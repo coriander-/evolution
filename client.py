@@ -2,8 +2,7 @@
 from twisted.internet import reactor, protocol
 import sys
 from twisted.internet.defer import DeferredQueue
-from ../evolution import GameSpace
-import pickle
+from evolution import GameSpace import pickle
 from twisted.internet.task import LoopingCall
 
 #protocol for server and client
@@ -17,7 +16,7 @@ class Prot(protocol.Protocol):
         
         #adjust game state set comp and other player position
         self.game.opponent = recv['player']
-        self.game.fish = recv['comps']
+        self.game.fish = recv['fish']
 
     def connectionMade(self):
         print "Connection made"
@@ -64,7 +63,7 @@ class Client(protocol.ClientFactory):
 
 #pass hostname and port in commandline
 if __name__=='__main__':
-    if sys.argc != 3:
+    if len(sys.argv) != 3:
         print 'usage: python client.py <hostname> <port>'
     else:
         f = Client(hostname, port)
