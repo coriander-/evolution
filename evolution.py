@@ -30,14 +30,14 @@ class GameState:
 
 		self.fish_height = []
 		self.fish_width = []
-		#self.fish_dx = []
+		self.fish_dx = []
 		self.fish_x = []
 		self.fish_y = []
 
 		self.player_height = []
 		self.player_width = []
-		#self.player_dx = []
-		#self.player_dy = []
+		self.player_dx = []
+		self.player_dy = []
 		self.player_x = []
 		self.player_y = []
 
@@ -367,14 +367,14 @@ class GameSpace:
 		# Clear all arrays in the game state
 		del self.game_state.fish_height[:]
 		del self.game_state.fish_width[:]
-		#del self.game_state.fish_dx[:]
+		del self.game_state.fish_dx[:]
 		del self.game_state.fish_x[:]
 		del self.game_state.fish_y[:]
 
 		del self.game_state.player_height[:]
 		del self.game_state.player_width[:]
-		#del self.game_state.player_dx[:]
-		#del self.game_state.player_dy[:]
+		del self.game_state.player_dx[:]
+		del self.game_state.player_dy[:]
 		del self.game_state.player_x[:]
 		del self.game_state.player_y[:]
 
@@ -382,7 +382,7 @@ class GameSpace:
 		for fish in self.fish:
 			self.game_state.fish_height.append(fish.height)
 			self.game_state.fish_width.append(fish.width)
-			#self.game_state.fish_dx.append(fish.dx)
+			self.game_state.fish_dx.append(fish.dx)
 			self.game_state.fish_x.append(fish.rect.centerx)
 			self.game_state.fish_y.append(fish.rect.centery)
 
@@ -390,8 +390,8 @@ class GameSpace:
 		for player in self.objects:
 			self.game_state.player_height.append(player.height)
 			self.game_state.player_width.append(player.width)
-			#self.game_state.player_dx.append(player.dx)
-			#self.game_state.player_dy.append(player.dy)
+			self.game_state.player_dx.append(player.dx)
+			self.game_state.player_dy.append(player.dy)
 			self.game_state.player_x.append(player.rect.centerx)
 			self.game_state.player_y.append(player.rect.centery)
 
@@ -406,14 +406,29 @@ class GameSpace:
 				fish.x = self.game_state.fish_x.pop(0)
 				fish.y = self.game_state.fish_y.pop(0)
 
-		for player in self.objects:
-			if self.game_state.player_height:
-				player.height = self.game_state.player_height.pop(0)
-				player.width = self.game_state.player_width.pop(0)
-				#player.dx = self.game_state.player_dx.pop(0)
-				#player.dy = self.game_state.player_dy.pop(0)
-				player.x = self.game_state.player_x.pop(0)
-				player.y = self.game_state.player_y.pop(0)
+		if self.isPlayer1:
+			player.height = self.game_state.player_height[1]
+			player.width = self.game_state.player_width[1]
+			player.dx = self.game_state.player_dx[1]
+			player.dy = self.game_state.player_dy[1]
+			player.x = self.game_state.player_x[1]
+			player.y = self.game_state.player_y[1]
+		else:
+			player.height = self.game_state.player_height[0]
+			player.width = self.game_state.player_width[0]
+			player.dx = self.game_state.player_dx[0]
+			player.dy = self.game_state.player_dy[0]
+			player.x = self.game_state.player_x[0]
+			player.y = self.game_state.player_y[0]
+
+		# for player in self.objects:
+		# 	if self.game_state.player_height:
+		# 		player.height = self.game_state.player_height.pop(0)
+		# 		player.width = self.game_state.player_width.pop(0)
+		# 		player.dx = self.game_state.player_dx.pop(0)
+		# 		player.dy = self.game_state.player_dy.pop(0)
+		# 		player.x = self.game_state.player_x.pop(0)
+		# 		player.y = self.game_state.player_y.pop(0)
 
 
 if __name__ == "__main__":
