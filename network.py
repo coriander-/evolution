@@ -65,16 +65,17 @@ class Factory(protocol.Factory):
 
 #pass port in commandline
 if __name__=='__main__':
-    f=Server()
+    f=Factory()
     try:
-        if argv[1] == 'client':
+        if sys.argv[1] == 'client':
             client = True
-            reactor.connectTCP(sys.argv[1], int(sys.argv[2]), f)
-        elif argv[1] == 'server':
+            reactor.connectTCP(sys.argv[2], int(sys.argv[3]), f)
+        elif sys.argv[1] == 'server':
             client = False
-            reactor.listenTCP(int(sys.argv[1]), f)
+            reactor.listenTCP(int(sys.argv[2]), f)
         else:
             raise Exception('not server or client')
         reactor.run()
     except Exception as ex:
-        print 'usage: python network.py <client|server> <hostname> <port>'
+        print 'usage: python network.py <client|server> <hostname?> <port>'
+        print str(ex)
