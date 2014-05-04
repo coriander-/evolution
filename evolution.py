@@ -34,12 +34,12 @@ class GameState:
 		self.fish_x = []
 		self.fish_y = []
 
-		self.player_height = []
-		self.player_width = []
-		self.player_dx = []
-		self.player_dy = []
-		self.player_x = []
-		self.player_y = []
+		self.opponent_height = 0
+		self.opponent_width = 0
+		self.opponent_dx = 0
+		self.opponent_dy = 0
+		self.opponent_x = 0
+		self.opponent_y = 0
 
 
 # Class for miscellaneous fish
@@ -232,7 +232,7 @@ class FishGenerator:
 		self.setMaxFish()
 		# If not enough fish, 5% chance to generate a new fish
 		if len(self.gs.fish) < self.maxfish and random.random() >= 0.95:
-			self.gs.fish.append(Fish(self.gs))
+			self.gs.fish = self.Fish(self.gs))
 
 
 	# Function to set the maximum number of fish on the screen 
@@ -371,12 +371,12 @@ class GameSpace:
 		del self.game_state.fish_x[:]
 		del self.game_state.fish_y[:]
 
-		del self.game_state.player_height[:]
-		del self.game_state.player_width[:]
-		del self.game_state.player_dx[:]
-		del self.game_state.player_dy[:]
-		del self.game_state.player_x[:]
-		del self.game_state.player_y[:]
+		self.game_state.opponent_height = 0
+		self.game_state.opponent_width = 0
+		self.game_state.opponent_dx = 0
+		self.game_state.opponent_dy = 0
+		self.game_state.opponent_x = 0
+		self.game_state.opponent_y = 0
 
 		# Fish array
 		for fish in self.fish:
@@ -386,14 +386,13 @@ class GameSpace:
 			self.game_state.fish_x.append(fish.rect.centerx)
 			self.game_state.fish_y.append(fish.rect.centery)
 
-		# Objects array
-		for player in self.objects:
-			self.game_state.player_height.append(player.height)
-			self.game_state.player_width.append(player.width)
-			self.game_state.player_dx.append(player.dx)
-			self.game_state.player_dy.append(player.dy)
-			self.game_state.player_x.append(player.rect.centerx)
-			self.game_state.player_y.append(player.rect.centery)
+		# Objects
+		self.game_state.opponent_height = self.player.height
+		self.game_state.opponent_width = self.player.width
+		self.game_state.opponent_dx = self.player.dx
+		self.game_state.opponent_dy = self.player.dy
+		self.game_state.opponent_x = self.player.rect.centerx
+		self.game_state.opponent_y = self.player.rect.centery
 
 	def unpack(self):
 		# Make sure all lists aren't empty before popping
@@ -406,20 +405,13 @@ class GameSpace:
 				fish.x = self.game_state.fish_x.pop(0)
 				fish.y = self.game_state.fish_y.pop(0)
 
-		if self.isPlayer1:
-			self.player.height = self.game_state.player_height[1]
-			self.player.width = self.game_state.player_width[1]
-			self.player.dx = self.game_state.player_dx[1]
-			self.player.dy = self.game_state.player_dy[1]
-			self.player.x = self.game_state.player_x[1]
-			self.player.y = self.game_state.player_y[1]
-		else:
-			self.player.height = self.game_state.player_height[0]
-			self.player.width = self.game_state.player_width[0]
-			self.player.dx = self.game_state.player_dx[0]
-			self.player.dy = self.game_state.player_dy[0]
-			self.player.x = self.game_state.player_x[0]
-			self.player.y = self.game_state.player_y[0]
+		self.opponent.height = self.game_state.opponent_height
+		self.opponent.width = self.game_state.opponent_width
+		self.opponent.dx = self.game_state.opponent_dx
+		self.opponent.dy = self.game_state.opponent_dy
+		self.opponent.x = self.game_state.opponent_x
+		self.opponent.y = self.game_state.opponent_y
+
 
 		# for player in self.objects:
 		# 	if self.game_state.player_height:
