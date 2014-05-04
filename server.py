@@ -53,7 +53,7 @@ class Server(protocol.Factory):
         self.q = DeferredQueue() 
         
         #create game and set as self.game
-        self.game = GameSpace(self.q);# every time game is change call q.put()
+        self.game = GameSpace(self.q, True);# every time game is change call q.put()
         self.game.main()
 
     def buildProtocol(self, addr):    

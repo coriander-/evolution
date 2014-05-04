@@ -2,7 +2,8 @@
 from twisted.internet import reactor, protocol
 import sys
 from twisted.internet.defer import DeferredQueue
-from evolution import GameSpace import pickle
+from evolution import GameSpace 
+import pickle
 from twisted.internet.task import LoopingCall
 
 #protocol for server and client
@@ -46,8 +47,7 @@ class Client(protocol.ClientFactory):
         self.q = DeferredQueue()
 
         #create game and set as self.game
-        self.game = GameSpace(q) # every time game is change call q.put()
-        self.game.main()
+        self.game = GameSpace(self.q, False) # every time game is change call q.put()
 
         #create loopingCall
         self.lc =LoopingCall(self.game.loop_iteration,None, None)
@@ -66,6 +66,6 @@ if __name__=='__main__':
     if len(sys.argv) != 3:
         print 'usage: python client.py <hostname> <port>'
     else:
-        f = Client(hostname, port)
+        f = Client(sys.argv[1], sys.argv[2])
         reactor.connectTCP(host, int(port), f)
         reactor.run()

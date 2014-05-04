@@ -5,7 +5,7 @@
 # Authors: Nick Burns (nburns3@nd.edu, coriander-)
 #		   Zach Lipp (zlipp@nd.edu)
 
-# Current version: 0.61 (May 3, 2014)
+# Current version: 0.70 (May 3, 2014)
 
 # Usage: python evolution.py <options> (not sure what all the options will be yet)
 
@@ -272,10 +272,12 @@ class GameSpace:
 		return False
 
 
-	def __init__(self, q):
+	def __init__(self, q, server = True):
 		# Basic intialization
 		pygame.init()
 		pygame.key.set_repeat(25, 25)
+
+		self.isPlayer1 = server
 		
 		self.q = q
 		self.size = self.width, self.height = 1000, 480
@@ -325,8 +327,12 @@ class GameSpace:
 		self.objects.append(self.player2)
 
 		# Set the player based on the command line arg
-		self.player = self.player1
-		self.opponent = self.player2
+		if self.isPlayer1:
+			self.player = self.player1
+			self.opponent = self.player2
+		else:
+			self.player = self.player2
+			self.opponent = self.player1
 
 		# Initialize the computer fish generator
 		self.fish_generator = FishGenerator(self)
