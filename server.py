@@ -2,7 +2,7 @@
 from twisted.internet import reactor, protocol
 import sys
 from twisted.internet.defer import DeferredQueue
-from evolution import GameSpace
+from evolution import *
 import pickle
 from twisted.internet.task import LoopingCall
 
@@ -22,14 +22,14 @@ class Prot(protocol.Protocol):
     def connectionMade(self):
         print "Connection made"
         #create loopingCall
-        self.lc =LoopingCall(self.game.loop_iteration,None, None)
+        self.lc =LoopingCall(self.game.loop_iteration)
         self.lc.start(1/60)
 
         self.q.get().addCallback(self.ForwardData)
 
     def connectionLost(self, reason):
         #close game
-        lc.stop()
+        self.lc.stop()
         print "Error: connection lost"
 
     #writes data in q and prepares for next item
@@ -67,6 +67,6 @@ if __name__=='__main__':
         print 'usage: python client.py <port>'
     else:
         f=Server()
-        reactor.listenTCP(sys.arv[1], sys.argv[2], f)
+        reactor.listenTCP(int(sys.argv[1]), f)
         reactor.run()
 
