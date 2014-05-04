@@ -16,12 +16,14 @@ class Prot(protocol.Protocol):
     def dataReceived(self, data):#when data received
         try:
             recv = pickle.loads(data)#load game state and set game state
+            #adjust other player
+            self.game.game_state = recv
+            self.game.unpack()
+
         except Exception as ex:
             print 'Pickle done messed up: ' + str(ex)
 
-        #adjust other player
-        self.game.game_state = recv
-        self.game.unpack()
+        
         
     def connectionMade(self):
         print "Connection made"
