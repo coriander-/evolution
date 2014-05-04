@@ -412,8 +412,8 @@ class GameSpace:
 		self.opponent.width = self.game_state.opponent_width
 		self.opponent.dx = self.game_state.opponent_dx
 		self.opponent.dy = self.game_state.opponent_dy
-		self.opponent.x = self.game_state.opponent_x
-		self.opponent.y = self.game_state.opponent_y
+		self.opponent.rect.centerx = self.game_state.opponent_x
+		self.opponent.rect.centery = self.game_state.opponent_y
 
 
 		# for player in self.objects:
