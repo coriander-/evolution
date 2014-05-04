@@ -58,7 +58,7 @@ class Prot(protocol.Protocol):
 #factory to create connection
 class Server(protocol.Factory):
     def buildProtocol(self, addr):    
-        return Prot( self.game)
+        return Prot()
 
     def clientConnectionFailed(self, connector, reason):
         print "Connection failed"
@@ -66,7 +66,7 @@ class Server(protocol.Factory):
 #factory to create connection
 class Client(protocol.ClientFactory):
     def buildProtocol(self, addr):    
-        return Prot( self.game)
+        return Prot()
 
     def clientConnectionFailed(self, connector, reason):
         print "Connection failed"
