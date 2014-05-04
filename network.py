@@ -46,7 +46,7 @@ class Prot(protocol.Protocol):
     def ForwardData(self, data):
         try:
             #send player and computer array
-            toSend = self.game.game_state().pack()
+            toSend = self.game.game_state.pack()
             
             w = pickle.dumps(toSend) #serialize 
             self.transport.write(w) #send game state
