@@ -44,7 +44,7 @@ class GameState:
 
 # Class for miscellaneous fish
 class Fish(pygame.sprite.Sprite):
-	def __init__(self, gs = None, height = 0, width = 0, dx = 0, x = 0, y = 0):
+	def __init__(self, gs = None, height = 1, width = 1, dx = 0, x = 0, y = 0):
 		pygame.sprite.Sprite.__init__(self)
 		self.gs = gs
 		self.image = pygame.image.load("media/fish_red.png")
@@ -87,7 +87,6 @@ class Fish(pygame.sprite.Sprite):
 			self.rect.centery = y
 
 			self.area = self.width * self.height
-			print "Area: " + str(self.area)
 			self.velocity = (150 * 150 * 1.5) / self.area
 
 			if dx > 0:
