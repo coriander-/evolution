@@ -371,7 +371,7 @@ class GameSpace:
 		del self.game_state.fish_x[:]
 		del self.game_state.fish_y[:]
 		del self.game_state.player_height[:]
-		del self.game_state.player_weight[:]
+		del self.game_state.player_width[:]
 		del self.game_state.player_dx[:]
 		del self.game_state.player_dy[:]
 		del self.game_state.player_x[:]
