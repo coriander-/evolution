@@ -16,8 +16,8 @@ class Prot(protocol.Protocol):
         recv = pickle.loads(data)#load game state and set game state
         
         #adjust game state set comp and other player position
-        self.game.enemy = recv['player']
-        self.game.comps = recv['comps']
+        self.game.opponent = recv['player']
+        self.game.fish = recv['comps']
 
     def connectionMade(self):
         print "Connection made"
@@ -48,6 +48,7 @@ class Client(protocol.ClientFactory):
 
         #create game and set as self.game
         self.game = GameSpace(q) # every time game is change call q.put()
+        self.game.main()
 
         #create loopingCall
         self.lc =LoopingCall(self.game.loop_iteration,None, None)

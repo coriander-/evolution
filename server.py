@@ -17,7 +17,7 @@ class Prot(protocol.Protocol):
         recv = pickle.loads(data)#load game state and set game state
         
         #adjust other player
-        self.game.enemy = recv
+        self.game.oppponent = recv
 
     def connectionMade(self):
         print "Connection made"
@@ -54,6 +54,7 @@ class Server(protocol.Factory):
         
         #create game and set as self.game
         self.game = GameSpace(q);# every time game is change call q.put()
+        self.game.main()
 
     def buildProtocol(self, addr):    
         return Prot(self.q, self.game)
