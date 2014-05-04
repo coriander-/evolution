@@ -304,7 +304,7 @@ class GameSpace:
 
 		self.isPlayer1 = server
 
-		self.game_state = GameState(self)
+		self.game_state = GameState()
 		
 		self.q = q
 		self.size = self.width, self.height = 1000, 480
