@@ -321,8 +321,9 @@ class GameSpace:
 		for o in self.objects:
 			o.tick()
 
-		# Generate new fish
-		self.fish_generator.tick()
+		# Generate new fish (as long as we're player 1)
+		if self.isPlayer1:
+			self.fish_generator.tick()
 		
 		#add to queue, send data
 		self.q.put('1')
