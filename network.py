@@ -17,8 +17,9 @@ class Prot(protocol.Protocol):
         recv = pickle.loads(data)#load game state and set game state
         
         #adjust other player
-        self.game.game_state = recv
-        self.game.game_state.unpack()
+        #self.game.game_state = recv
+        #self.game.game_state.unpack()
+        recv.unpack()
 
     def connectionMade(self):
         print "Connection made"
