@@ -407,19 +407,19 @@ class GameSpace:
 				fish.y = self.game_state.fish_y.pop(0)
 
 		if self.isPlayer1:
-			player.height = self.game_state.player_height[1]
-			player.width = self.game_state.player_width[1]
-			player.dx = self.game_state.player_dx[1]
-			player.dy = self.game_state.player_dy[1]
-			player.x = self.game_state.player_x[1]
-			player.y = self.game_state.player_y[1]
+			self.player.height = self.game_state.player_height[1]
+			self.player.width = self.game_state.player_width[1]
+			self.player.dx = self.game_state.player_dx[1]
+			self.player.dy = self.game_state.player_dy[1]
+			self.player.x = self.game_state.player_x[1]
+			self.player.y = self.game_state.player_y[1]
 		else:
-			player.height = self.game_state.player_height[0]
-			player.width = self.game_state.player_width[0]
-			player.dx = self.game_state.player_dx[0]
-			player.dy = self.game_state.player_dy[0]
-			player.x = self.game_state.player_x[0]
-			player.y = self.game_state.player_y[0]
+			self.player.height = self.game_state.player_height[0]
+			self.player.width = self.game_state.player_width[0]
+			self.player.dx = self.game_state.player_dx[0]
+			self.player.dy = self.game_state.player_dy[0]
+			self.player.x = self.game_state.player_x[0]
+			self.player.y = self.game_state.player_y[0]
 
 		# for player in self.objects:
 		# 	if self.game_state.player_height:
