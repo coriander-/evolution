@@ -5,7 +5,7 @@
 # Authors: Nick Burns (nburns3@nd.edu, coriander-)
 #		   Zach Lipp (zlipp@nd.edu)
 
-# Current version: 0.70 (May 3, 2014)
+# Current version: 0.80 (May 3, 2014)
 
 # Usage: python evolution.py <options> (not sure what all the options will be yet)
 
@@ -22,6 +22,67 @@ from twisted.internet.defer import DeferredQueue
 import sys
 import math
 import random
+
+
+# Class to store the game state in
+class GameState:
+	def __init__(self, gs = None):
+		self.gs = gs
+
+		self.fg = None
+
+		self.fish_height = []
+		self.fish_width = []
+		self.fish_dx = []
+		self.fish_x = []
+		self.fish_y = []
+
+		self.player_height = []
+		self.player_width = []
+		self.player_dx = []
+		self.player_dy = []
+		self.player_x = []
+		self.player_y = []
+
+	# Store all necessary elements from the gamespace to the state
+	def pack(self):
+		self.fg = self.gs.fish_generator
+
+		# Fish array
+		for fish in self.gs.fish:
+			self.fish_height.append(fish.height)
+			self.fish_width.append(fish.width)
+			self.fish_dx.append(fish.dx)
+			self.fish_x.append(fish.rect.centerx)
+			self.fish_y.append(fish.rect.centery)
+
+		# Objects array
+		for player in self.gs.objects:
+			self.player_height.append(player.height)
+			self.player_width.append(player.width)
+			self.player_dx.append(player.dx)
+			self.player_dy.append(player.dy)
+			self.player_x.append(player.rect.centerx)
+			self.player_y.append(player.rect.centery)
+
+	# Save all necessary elements to the gamespace from the state
+	def unpack(self):
+		self.gs.fish_generator = self.fg
+
+		for fish in self.gs.fish:
+			fish.height = self.fish_height.pop(0)
+			fish.width = self.fish_width.pop(0)
+			fish.dx = self.fish_dx.pop(0)
+			fish.x = self.fish_x.pop(0)
+			fish.y = self.fish_y.pop(0)
+
+		for player in self.gs.objects:
+			# Create a function in player to set the width and height?
+			player.setSize(self.player_width.pop(0), self.player_height.pop(0))
+			player.dx = self.player_dx.pop(0)
+			player.dy = self.player_dy.pop(0)
+			player.x = self.player_x.pop(0)
+			player.y = self.player_y.pop(0)
 
 
 # Class for miscellaneous fish
@@ -195,6 +256,12 @@ class Player(pygame.sprite.Sprite):
 		if pressed[pygame.K_DOWN] and self.rect.bottom <= self.gs.height:
 			self.dy = self.velocity
 
+	def setSize(self, width, height):
+		self.width = width
+		self.height = height
+		self.right = pygame.transform.scale(self.orig_image, (self.width, self.height))
+		self.left = pygame.transform.scale(self.orig_flipped, (self.width, self.height))
+
 
 # Class to generate fish at random intervals based on the length of the game
 class FishGenerator:
@@ -278,6 +345,8 @@ class GameSpace:
 		pygame.key.set_repeat(25, 25)
 
 		self.isPlayer1 = server
+
+		self.game_state = GameState(self)
 		
 		self.q = q
 		self.size = self.width, self.height = 1000, 480
