@@ -64,8 +64,8 @@ class Fish(pygame.sprite.Sprite):
 			self.width = int(self.height * 1.5)
 			self.area = self.width * self.height
 			self.velocity = (150 * 150 * 1.5) / self.area
-
-
+			if self.velocity>20:
+				self.velocity = 10
 			if self.right:
 				self.dx = self.velocity
 				self.rect.centerx = -100
@@ -153,6 +153,11 @@ class Player(pygame.sprite.Sprite):
 		px = self.rect.centerx
 		py = self.rect.centery
 
+		#set facing
+		if self.dx<0:
+			self.image = self.orig_flipped
+		elif self.dx>0:
+			self.image = self.orig_image
 		# Move the player based on keys pressed
 		self.rect = self.rect.move(self.dx, self.dy)
 
@@ -278,6 +283,8 @@ class GameSpace:
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+				#print 'here'
+				self.q.put('QUIT')
 				return True
 				#break
 			elif event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:

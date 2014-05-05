@@ -12,16 +12,20 @@ import pygame
 class Prot(protocol.Protocol):
     def __init__(self):
         self.q = DeferredQueue() 
+        self.quit = False
 
     def dataReceived(self, data):#when data received
         try:
-            recv = pickle.loads(data)#load game state and set game state
             #adjust other player
-            self.game.game_state = recv
-            self.game.unpack()
+            if data=='QUIT':
+                print "The other player ended the game"
+            else:
+                recv = pickle.loads(data)#load game state and set game state
+                self.game.game_state = recv
+                self.game.unpack()
 
         except Exception as ex:
-            print 'Pickle done messed up: ' + str(ex)
+            print 'Pickle done messed up on '+data+': ' + str(ex)
 
         
         
@@ -40,22 +44,31 @@ class Prot(protocol.Protocol):
         self.q.get().addCallback(self.ForwardData)
 
     def connectionLost(self, reason):
-        #close game
-        self.lc.stop()
-        pygame.quit()
-        if(client):
-            reactor.stop()        
-        print "Error: connection lost"
+        if self.quit == False:
+            #close game
+            self.lc.stop()
+            reactor.stop()    
+            self.quit = True
+            print "Connection Lost: Game ended"
+        else: #game has already 
+            print "You terminated the connection"
 
     #writes data in q and prepares for next item
     def ForwardData(self, data):
         try:
+            #send quit to other player
+            if data == 'QUIT':
+                self.transport.write('QUIT')
+                self.connectionLost('you ended the game')
+                print "You ended the game"
+            else:
             #send player and computer array
-            self.game.pack()
+                self.game.pack()
             
-            w = pickle.dumps(self.game.game_state) #serialize 
-            self.transport.write(w) #send game state
-            self.q.get().addCallback(self.ForwardData)
+                w = pickle.dumps(self.game.game_state) #serialize 
+                self.transport.write(w) #send game state
+
+                self.q.get().addCallback(self.ForwardData)
         except Exception as ex:
             print "Failed to send game state: "+str(ex)
             #self.transport.write("Failed to get update")
