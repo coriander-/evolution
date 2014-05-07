@@ -25,8 +25,8 @@ class Prot(protocol.Protocol):
                 self.game.unpack()
 
         except Exception as ex:
-            print 'Pickle done messed up on '+data+': ' + str(ex)
-
+            #print 'Pickle done messed up on '+data+': ' + str(ex)
+            pass
         
         
     def connectionMade(self):
@@ -70,8 +70,9 @@ class Prot(protocol.Protocol):
 
                 self.q.get().addCallback(self.ForwardData)
         except Exception as ex:
-            print "Failed to send game state: "+str(ex)
+            #print "Failed to send game state: "+str(ex)
             #self.transport.write("Failed to get update")
+            pass
 
 #factory to create connection
 class Server(protocol.Factory):
