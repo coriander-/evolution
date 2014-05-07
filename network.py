@@ -80,6 +80,10 @@ class Server(protocol.Factory):
 
     def clientConnectionFailed(self, connector, reason):
         print "Connection failed"
+        try:
+            reactor.stop()    
+        except Exception as ex:
+            print str(ex)
 
 #factory to create connection
 class Client(protocol.ClientFactory):
@@ -88,6 +92,10 @@ class Client(protocol.ClientFactory):
 
     def clientConnectionFailed(self, connector, reason):
         print "Connection failed"
+        try:
+            reactor.stop()    
+        except Exception as ex:
+            print str(ex)
 
 #pass port in commandline
 if __name__=='__main__':
