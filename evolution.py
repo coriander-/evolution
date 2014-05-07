@@ -5,7 +5,7 @@
 # Authors: Nick Burns (nburns3@nd.edu, coriander-)
 #		   Zach Lipp (zlipp@nd.edu)
 
-# Current version: 0.80 (May 3, 2014)
+# Current version: 1.01 (May 7, 2014)
 
 # Usage: python evolution.py <options> (not sure what all the options will be yet)
 
