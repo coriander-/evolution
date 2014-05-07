@@ -152,8 +152,6 @@ class Player(pygame.sprite.Sprite):
 		# Get mouse x and y
 		mx, my = pygame.mouse.get_pos()
 
-		print "Right edge of collision rectangle: " + str(self.rect.right)
-
 		# Calculate the angle between current direction and mouse position
 		px = self.rect.centerx
 		py = self.rect.centery
