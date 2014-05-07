@@ -155,9 +155,11 @@ class Player(pygame.sprite.Sprite):
 
 		#set facing
 		if self.dx<0:
-			self.image = self.orig_flipped
+			#self.image = self.orig_flipped
+			self.image = self.left
 		elif self.dx>0:
-			self.image = self.orig_image
+			#self.image = self.orig_image
+			self.image = self.right
 		# Move the player based on keys pressed
 		self.rect = self.rect.move(self.dx, self.dy)
 
@@ -227,7 +229,13 @@ class Player(pygame.sprite.Sprite):
 		# the fish go the other direction)
 		if pressed[pygame.K_RIGHT] and self.rect.right <= self.gs.width:
 			self.dx = self.velocity
+			# rect = self.right.get_rect()
+			# print "Width of fish: " + str(self.width)
+			# print "Width of self.right: " + str(rect.width)
 			self.image = self.right
+			# self.image = pygame.transform.scale(self.orig_image, (self.width, self.height))
+			# rect2 = self.image.get_rect()
+			# print "Width of self.image: " + str(rect.width)
 		if pressed[pygame.K_LEFT] and self.rect.left >= 0:
 			self.dx = -1 * self.velocity
 			self.image = self.left
@@ -289,13 +297,6 @@ class GameSpace:
 				#break
 			elif event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
 				self.player.move()
-			elif event.type == pygame.MOUSEBUTTONDOWN:
-				#self.player.fire()
-				#self.fish.append(Fish(self))
-				pass
-			elif event.type == pygame.MOUSEBUTTONUP:
-				#self.player.stopFire()
-				pass
 		
 		# Send a tick to every game object
 		if self.isPlayer1:
@@ -316,7 +317,9 @@ class GameSpace:
 		self.screen.blit(self.backdrop, (0,0))
 		for l in self.fish:
 			self.screen.blit(l.image, l.rect)
-		for o in self.objects:
+		for i, o in enumerate(self.objects):
+			rect = o.image.get_rect()
+			print "Fish " + str(i) + " width: " + str(rect.width) + " rect width: " + str(o.rect.width)
 			self.screen.blit(o.image, o.rect)
 		
 		pygame.display.flip()
