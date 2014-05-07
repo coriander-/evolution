@@ -149,6 +149,8 @@ class Player(pygame.sprite.Sprite):
 		# Get mouse x and y
 		mx, my = pygame.mouse.get_pos()
 
+		print "Right edge of collision rectangle: " + str(self.rect.right)
+
 		# Calculate the angle between current direction and mouse position
 		px = self.rect.centerx
 		py = self.rect.centery
@@ -167,6 +169,12 @@ class Player(pygame.sprite.Sprite):
 		self.check_collisions()
 
 	def check_collisions(self):
+		# Check for collision with edge of window, kill velocity if it's at edge
+		if self.rect.right >= self.gs.width or self.rect.left <= 0:
+			self.dx = 0
+		if self.rect.bottom >= self.gs.height or self.rect.top <= 0:
+			self.dy = 0
+
 		# Check for collision with a fish, eat it if it's smaller
 		self.area = self.width * self.height
 		collide = self.rect.collidelist(self.gs.fish)
@@ -229,13 +237,7 @@ class Player(pygame.sprite.Sprite):
 		# the fish go the other direction)
 		if pressed[pygame.K_RIGHT] and self.rect.right <= self.gs.width:
 			self.dx = self.velocity
-			# rect = self.right.get_rect()
-			# print "Width of fish: " + str(self.width)
-			# print "Width of self.right: " + str(rect.width)
 			self.image = self.right
-			# self.image = pygame.transform.scale(self.orig_image, (self.width, self.height))
-			# rect2 = self.image.get_rect()
-			# print "Width of self.image: " + str(rect.width)
 		if pressed[pygame.K_LEFT] and self.rect.left >= 0:
 			self.dx = -1 * self.velocity
 			self.image = self.left
@@ -292,7 +294,7 @@ class GameSpace:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
 				#print 'here'
-				self.q.put('QUIT')
+				# self.q.put('QUIT')
 				return True
 				#break
 			elif event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
@@ -310,7 +312,7 @@ class GameSpace:
 			self.fish_generator.tick()
 		
 		#add to queue, send data
-		self.q.put('1')
+		# self.q.put('1')
 
 		# Display game objects
 		self.screen.fill(self.black)
@@ -318,8 +320,8 @@ class GameSpace:
 		for l in self.fish:
 			self.screen.blit(l.image, l.rect)
 		for i, o in enumerate(self.objects):
-			rect = o.image.get_rect()
-			print "Fish " + str(i) + " width: " + str(rect.width) + " rect width: " + str(o.rect.width)
+			#rect = o.image.get_rect()
+			#print "Fish " + str(i) + " width: " + str(rect.width) + " rect width: " + str(o.rect.width)
 			self.screen.blit(o.image, o.rect)
 		
 		pygame.display.flip()
@@ -335,7 +337,7 @@ class GameSpace:
 
 		self.game_state = GameState()
 		
-		self.q = q
+		# self.q = q
 		self.size = self.width, self.height = 1000, 480
 		self.black = 0, 0, 0
 		self.backdrop = pygame.image.load("media/background.png")
@@ -465,5 +467,5 @@ if __name__ == "__main__":
 	random.seed()
 
 	# Setup pygame stuff, initialize the game
-	gs = GameSpace()
+	gs = GameSpace(True)
 	gs.main()
