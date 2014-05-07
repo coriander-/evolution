@@ -64,8 +64,11 @@ class Fish(pygame.sprite.Sprite):
 			self.width = int(self.height * 1.5)
 			self.area = self.width * self.height
 			self.velocity = (150 * 150 * 1.5) / self.area
-			if self.velocity>20:
-				self.velocity = 10
+
+			# Cap velocity at 7
+			if self.velocity > 7:
+				self.velocity = 7
+
 			if self.right:
 				self.dx = self.velocity
 				self.rect.centerx = -100
@@ -294,7 +297,7 @@ class GameSpace:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
 				#print 'here'
-				# self.q.put('QUIT')
+				self.q.put('QUIT')
 				return True
 				#break
 			elif event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
@@ -312,7 +315,7 @@ class GameSpace:
 			self.fish_generator.tick()
 		
 		#add to queue, send data
-		# self.q.put('1')
+		self.q.put('1')
 
 		# Display game objects
 		self.screen.fill(self.black)
@@ -337,7 +340,7 @@ class GameSpace:
 
 		self.game_state = GameState()
 		
-		# self.q = q
+		self.q = q
 		self.size = self.width, self.height = 1000, 480
 		self.black = 0, 0, 0
 		self.backdrop = pygame.image.load("media/background.png")
@@ -467,5 +470,5 @@ if __name__ == "__main__":
 	random.seed()
 
 	# Setup pygame stuff, initialize the game
-	gs = GameSpace(True)
+	gs = GameSpace()
 	gs.main()
